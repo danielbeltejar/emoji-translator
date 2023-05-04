@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Emoji Translator</title>
+    <link rel="icon" type="image/png" href="https://cdn.shopify.com/s/files/1/1061/1924/products/Nerd_with_Glasses_Emoji_2a8485bc-f136-4156-9af6-297d8522d8d1_medium.png?v=1571606036">
+    <!-- Load Tailwind CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/tailwindcss@2.2.15/dist/tailwind.min.css">
+</head>
+
+<body class="lg:bg-gray-200">
+    <div class="container mx-auto py-10">
+        <h1 class="text-6xl lg:text-3xl text-center mb-5">Emoji Translator 🤓</h1>
+        <form method="post" class="lg:max-w-2xl mx-auto bg-white p-5 rounded-lg lg:shadow-lg">
+            <div class="form-group">
+                <label for="input-text" class="mt-20 lg:mt-0 block text-4xl lg:text-base text-gray-700 font-bold mb-2 flex">
+                    <span>Input message</span>
+                    <span id="input-length" class="ml-auto text-gray-500 text-2xl lg:text-sm"></span>
+                </label>
+                <textarea type="text"
+                    class="form-control password-mask bg-gray-100 border-2 rounded-lg w-full py-2 px-4 text-4xl lg:text-base" id="input-text"
+                    name="input-text" rows="5"></textarea>
+            </div>
+            <div class="form-group mt-3">
+                <label for="output-text" class="mt-20 lg:mt-0 block text-4xl lg:text-base text-gray-700 font-bold mb-2 flex">
+                    <span>Output message</span>
+                    <span id="output-length" class="ml-auto text-gray-500 text-2xl lg:text-sm"></span>
+                </label>
+                <textarea class="form-control bg-gray-100 border-2 rounded-lg w-full py-2 px-4 text-4xl lg:text-base" id="output-text"
+                    name="output-text" rows="5" readonly></textarea>
+            </div>
+            <div class="flex lg:mt-0 gap-x-4">
+                <button type="button" class="bg-blue-500 hover:bg-blue-700 hover:outline hover:outline-2 hover:outline-offset-2 hover:outline-blue-700 text-4xl lg:text-base text-white font-bold py-6 lg:py-2 px-12 lg:px-4 rounded-xl lg:rounded mt-20 lg:mt-5"
+                    id="copy-output">Copy
+                </button>
+                <button type="button" class="invisible ml-auto w-60 lg:w-28 bg-white border border-2 border-blue-700 text-4xl lg:text-base text-blue-700 font-bold py-6 lg:py-2 px-12 lg:px-4 rounded-xl lg:rounded mt-20 lg:mt-5"
+                    id="backend-time">
+                </button>
+                <button type="button" class="transition-colors duration-500 w-60 lg:w-28 hover:outline hover:outline-2 hover:outline-offset-2 hover:outline-blue-700 text-4xl lg:text-base text-white font-bold py-6 lg:py-2 px-12 lg:px-4 rounded-xl lg:rounded mt-20 lg:mt-5"
+                    id="backend-type">Backend
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Load Tailwind scripts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        const inputText = document.querySelector('#input-text');
+        const outputText = document.querySelector('#output-text');
+        const copyOutputButton = document.querySelector('#copy-output');
+        const outputLength = document.querySelector('#output-length');
+        const inputLength = document.querySelector('#input-length');
+        const outputProcess = document.querySelector('#backend-time');
+        const backendButton = document.querySelector('#backend-type');
+        var url = ''
+
+        let timeoutId;
+
+        var randomNumber = Math.random();
+        let backendType = randomNumber < 0.5;
+
+        function changeBackend() {
+            if (backendType === false) {
+                url = 'http://127.0.0.1:8000/v1/translator/python'
+                backendButton.classList.remove(['bg-purple-600'])
+                backendButton.classList.add(['bg-green-600'])
+                backendButton.textContent = 'Python'
+                return
+            }
+            url = 'http://127.0.0.1:8000/v1/translator/go'
+            backendButton.classList.remove(['bg-green-600'])
+            backendButton.classList.add(['bg-purple-600'])
+            backendButton.textContent = 'Go'
+        }
+
+        changeBackend()
+
+        inputText.addEventListener('input', (event) => {
+            const text = event.target.value;
+
+            clearTimeout(timeoutId);
+
+            timeoutId = setTimeout(() => {
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({'input-text': text})
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        outputText.value = data.output_text;
+                        outputProcess.textContent =  `${data.backend_time} ms`;
+                        outputProcess.classList.remove("invisible")
+                        if (outputText.value.includes("🥵")) {
+                            outputLength.textContent = `${outputText.value.length / 2} characters`;
+                        } else {
+                            outputLength.textContent = `${outputText.value.length} characters`;
+                        }
+
+                        if (inputText.value.length === 1) {
+                            inputLength.textContent = `${inputText.value.length} character`;
+                        } else {
+                            if (inputText.value.includes("🥵")) {
+                                inputLength.textContent = `${inputText.value.length / 2} characters`;
+                            } else {
+                                inputLength.textContent = `${inputText.value.length} characters`;
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }, 100);
+        });
+
+        copyOutputButton.addEventListener('click', () => {
+            navigator.clipboard.writeText(outputText.value)
+                .then(() => {
+                    console.log('Output copied to clipboard');
+                })
+                .catch((error) => {
+                    console.error('Failed to copy output: ', error);
+                });
+        });
+
+        backendButton.addEventListener('click', () => {
+            backendType = !backendType
+            changeBackend()
+        })
+    </script>
+</body>
+
+</html>
