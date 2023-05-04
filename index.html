@@ -63,13 +63,13 @@
 
         function changeBackend() {
             if (backendType === false) {
-                url = '/v1/translator/python'
+                url = '/translate/v1/python'
                 backendButton.classList.remove(['bg-purple-600'])
                 backendButton.classList.add(['bg-green-600'])
                 backendButton.textContent = 'Python'
                 return
             }
-            url = '/v1/translator/go'
+            url = '/translate/v1/go'
             backendButton.classList.remove(['bg-green-600'])
             backendButton.classList.add(['bg-purple-600'])
             backendButton.textContent = 'Go'
