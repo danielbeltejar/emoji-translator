@@ -13,7 +13,7 @@
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
             t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
             y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "hch0faf39f");
+        })(window, document, "clarity", "script", "6n7dkmur2b");
     </script>
 </head>
 
@@ -97,11 +97,12 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({'input-text': text})
+                    body: JSON.stringify({'input-text': text.replace("/🏳️‍🌈/g","🥵").replace("/❤️/g","🥶",)})
                 })
                     .then(response => response.json())
                     .then(data => {
                         outputText.value = data.output_text;
+                        //outputText.value = data.output_text.replace("🥵", "🏳️‍🌈").replace("🥶", "❤️");
                         outputProcess.textContent =  `${data.backend_time} ms`;
                         outputProcess.classList.remove("invisible")
                         if (outputText.value.includes("🥵")) {
