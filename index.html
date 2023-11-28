@@ -19,7 +19,7 @@
 
 <body class="lg:bg-gray-200">
     <div class="container mx-auto py-10">
-        <h1 class="text-6xl lg:text-3xl text-center mb-5">Emoji Translator 🤓</h1>
+        <h1 id="pageTitle" class="text-6xl lg:text-3xl text-center mb-5">Emoji Translator 🥸</h1>
         <form method="post" class="lg:max-w-2xl mx-auto bg-white p-5 rounded-lg lg:shadow-lg">
             <div class="form-group">
                 <label for="input-text" class="mt-20 lg:mt-0 block text-4xl lg:text-base text-gray-700 font-bold mb-2 flex">
@@ -97,7 +97,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({'input-text': text.replace("/🏳️‍🌈/g","🥵").replace("/❤️/g","🥶",)})
+                    body: JSON.stringify({'input-text': text.replace("/🏳️‍🌈/g ","🥵").replace("/❤️/g","🥶",)})
                 })
                     .then(response => response.json())
                     .then(data => {
@@ -141,6 +141,32 @@
             backendType = !backendType
             changeBackend()
         })
+    </script>
+    <script src="https://www.cssscript.com/demo/make-it-snow-fall/snowfall.js"></script>
+    <script>
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+
+        if (currentMonth >= 11 || currentMonth <= 1) {
+                document.getElementById('pageTitle').innerText = "Emoji Translator 🎅";
+                let snowfall = new Snowfall({
+    // number of snowflakes
+    count: 100,
+    // min/max size
+    minRadius: 10,
+    maxRadius: 30,
+    // min/max speed
+    minSpeed: 3,
+    maxSpeed: 10,
+    // custom symbol or text for snowflakes
+    text: "\u2744",
+    // color of snowflakes
+    color: "#ffffff",
+    // z-index for the canvas
+    zIndex: "1000"
+});
+
+        }
     </script>
 </body>
 
